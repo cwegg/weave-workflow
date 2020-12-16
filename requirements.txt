@@ -1,2 +1,3 @@
 astropy
 astropy-healpix
+matplotlib
