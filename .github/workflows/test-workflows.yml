@@ -8,10 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8]
+        python-version: [3.5, 3.6, 3.7, 3.8]
 
     steps:
     - uses: actions/checkout@v2
+    - name: Checkout submodules
+      run: git submodule update --init --recursive
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
@@ -32,4 +34,4 @@ jobs:
         echo "PYTHONPATH=/home/runner/work/weave-workflow/ifu" >> $GITHUB_ENV
     - name: Test with pytest
       run: |
-        pytest
+        pytest --collect-only
