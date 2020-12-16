@@ -12,8 +12,20 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Checkout submodules
-      run: git submodule update --init --recursive
+      -
+    - name: clone submodule
+      uses: actions/checkout@v2
+      with:
+        repository: cwegg/weave-ifu
+        path: path
+        ssh-key: ${{ secrets.SSH_KEY }}
+        persist-credentials: true
+
+    - name: checkout submodule
+      run: |
+        git submodule init
+        git submodule update
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
