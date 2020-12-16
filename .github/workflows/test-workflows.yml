@@ -12,20 +12,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      -
-    - name: clone submodule
-      uses: actions/checkout@v2
-      with:
-        repository: cwegg/weave-ifu
-        path: path
-        ssh-key: ${{ secrets.SSH_KEY }}
-        persist-credentials: true
-
-    - name: checkout submodule
+    - name: Checkout private submodules using a PAT
       run: |
-        git submodule init
-        git submodule update
-
+        git config --file .gitmodules --get-regexp url | while read url; do
+          git config --file=.gitmodules $(echo "$url" | sed -E "s/git@github.com:|https:\/\/github.com\//https:\/\/${{ secrets.CI_PAT }}:${{ secrets.CI_PAT }}@github.com\//")
+        done
+        git submodule sync
+        git submodule update --init --recursive
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
