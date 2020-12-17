@@ -1,13 +1,7 @@
-import pytest
 import os.path
 import pathlib
 import mos.workflow
-
-# Reuse fixtures from IFU tests
-pytest_plugins = [
-    "ifu.workflow_test.conftest",
-]
-
+import pytest
 
 # Then add all fixtures that need changing for MOS
 
