@@ -36,8 +36,7 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --exclude ifu/dmurphy
     - name: set pythonpath
       run: |
-        echo "PYTHONPATH=/home/runner/work/weave-workflow/weave-workflow/ifu
-        :/home/runner/work/weave-workflow/weave-workflow" >> $GITHUB_ENV
+        echo "PYTHONPATH=/home/runner/work/weave-workflow/weave-workflow/ifu:/home/runner/work/weave-workflow/weave-workflow" >> $GITHUB_ENV
     - name: Test with pytest
       run: |
         pytest
