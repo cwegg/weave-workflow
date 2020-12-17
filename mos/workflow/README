@@ -1,0 +1,45 @@
+Creation of MOS XMLs is much simpler than IFU XMLs.
+We shadow the IFU creation for simplicity for the first 4 stages,
+but at this point are finished.
+
+Stage 1: Creation of field center catalogue
+-----------------------------------------
+
+The target level catalogues submitted to the wasp don't know
+anything about field centers. We first create a fits file
+specifying where we'd like to construct OBs and with what
+instrument settings/observation conditions.
+
+
+Stage 2: Creation of the XML files with the targets
+---------------------------------------------------
+
+We then create the XMLs with the targets from the catalogues to these.
+
+Stage 3: Adding guide and calibration stars to the XML files
+------------------------------------------------------------
+
+Each XML file is further developed by injecting the non-science target
+information. This includes addition of the guidestar(s)
+as well as calibration target options.
+
+Stage 4: Configuring the XML files
+----------------------------------
+
+**Contributors:** David Terrett
+
+End-users are required to have a copy of Configure tools installed and
+running for this stage. XML files are passed to the Configure
+tools. For LIFU observations, this serves solely to populate the XML
+with the LIFU array, including correct positions for the fibres. For
+the mIFU, this involves a more interactive method of dropping mIFU
+bundles onto input targets. The location of the sky mIFU bundles is
+chosen at this stage. Configure then calculates the bundle rotation
+and consequently fibre positions. For the mIFU, this can be an
+iterative process, whereby un-allocated targets may be re-submitted
+to Configure in order to generate a new XML file (and hence
+observation) with these additional targets. For both IFU modes, where
+required Configure will implement the pre-set dither pattern. This is
+controlled by the apply_dither' attribute in the <dithering> element,
+which in turn is inherited from the ifu_dither column in stage 0
+catalogue.
