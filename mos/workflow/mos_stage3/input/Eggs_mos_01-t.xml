@@ -284,7 +284,7 @@
         The <offsets> element will be populated by configure, using the
         data entered into the <fields> element.
     -->
-    <dithering apply_dither="%%%"/>
+    <dithering apply_dither="0"/>
     <surveys>
       <survey max_fibres="1000" name="GA-LRHIGHLAT" priority="1.0"/>
       <!--
@@ -303,7 +303,11 @@
     -->
     <fields>
       <field Dec_d="50.00000" RA_d="200.00000" order="3">
-			</field>
+        <target cname="%%%" targcat="%%%" targclass="%%%" targdec="%%%" targepoch="%%%" targid="%%%" targname="%%%" targparal="%%%" targpmdec="%%%" targpmra="%%%" targprio="%%%" targprog="%%%" targra="%%%" targsrvy="%%%" targuse="T">
+          <photometry emag_bp="%%%" emag_g="%%%" emag_gg="%%%" emag_i="%%%" emag_r="%%%" emag_rp="%%%" mag_bp="%%%" mag_g="%%%" mag_gg="%%%" mag_i="%%%" mag_r="%%%" mag_rp="%%%"/>
+        </target>
+        <target cname="%%%" targcat="%%%" targclass="%%%" targdec="%%%" targepoch="%%%" targid="%%%" targname="%%%" targparal="0.0" targpmdec="0.0" targpmra="0.0" targprio="%%%" targprog="%%%" targra="%%%" targsrvy="%%%" targuse="S"/>
+      </field>
     </fields>
   </observation>
 </weave>
