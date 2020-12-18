@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+<weave author="a@domain.com" cc_report="b@domain.com,c@domain.com" datamver="8.00" report_verbosity="1">
+  <!--
+      Detailed documentation for this file is available in:
+        - WEAVE-ICD-025 "Configure XML Definition"
+        - WEAVE-ICD-030 "WEAVE SPA to SWG & QAG ICD"
+      These files can be obtained from the WEAVE Operational Repository:
+        http://casu.ast.cam.ac.uk/weave/
+      Please consult these documents BEFORE requesting assistance.
+      This file represents a blank XML template (WEAVE data model
+      version indicated in <weave> as datamver) that is ready to be
+      filled with:
+        1. Instrument configuration information
+        2. Field observing constraints appropriate to either...
+        3a. ...targets from "protofield" FITS files containing
+            ~1500-2000 targets (for MOS; run through Configure)
+        3b. ...insertion of a populated IFU array containing 640 fibers
+            and one guide star (for LIFU)
+        3c. ..."driver targets" for assiging fibre bundles to targets
+            (for mIFU; run through Configure)
+      Tools to generate appropriate instrument configuration (PROGTEMP)
+      code and observational constraint (OBSTEMP) codes can be found at
+      the WEAVE Automated Submission Platform (WASP):
+        http://wasp.ast.cam.ac.uk
+      This XML file must be submitted to the WASP for validation prior
+      to observation.
+      The author's email address should be added to the "author"
+      attribute of the <weave> element, along with any additional email
+      addresses for those requiring WASP validation reports in the
+      "cc_report" attribute. Please choose the verbosity level of the
+      WASP report in the "report_verbosity" attribute.
+  -->
+  <programme>
+    <!--
+        Each XML Observing Block has a PROGTEMP value, which defines
+        how the instrument is configured. Please bear in mind the
+        "NORBI.X" mnemonic for PROGTEMP codes:
+          PROGTEMP = "NORBI.X(+)"
+            N = I(N)strument configuration
+            O = (O)B length
+            R = (R)ed arm exposure code
+            B = (B)lue arm exposure code
+            I = B(I)nning in the spectral direction
+            X(+) = Clone this XML Observing Block (X) times.
+                   Follow this with a "+" to chain these cloned OBs so
+                   that completion of one in the chain boosts the
+                   weights (within a survey) of the remaining OBs.
+        Only targets with the same PROGTEMP should be observed within
+        this OB.
+    -->
+    <spectrograph>
+      <red_Arm VPH="VPH1" binning_X="1" binning_Y="1" resolution="low" speed="slow"/>
+      <blue_Arm VPH="VPH1" binning_X="1" binning_Y="1" resolution="low" speed="slow"/>
+      <!--
+          <spectrograph> defines the configuration for both arms of the
+          spectrograph (both arms and all attributes are mandatory):
+            - binning_X:                                                [mandatory value]
+              Arm detector binning in spatial direction for the program.
+                Possible values: "1" (no other values will be accepted for science observations)
+            - binning_Y:                                                [defined by PROGTEMP]
+              Arm detector binning in spectral direction for the
+              program.
+                Possible values: "1", "2", "3", "4"
+            - resolution:                                               [defined by PROGTEMP]
+              Arm resolution for the program.
+                Possible values: "low", "high"
+            - speed:                                                    [fixed in template]
+              Arm readout speed for the program.
+                Possible values: "fast", "slow"
+            - VPH:                                                      [defined by PROGTEMP]
+              Arm grating.
+                Possible values: "n/a", "VPH1", "VPH2", "VPH3"
+                ("VPH3" only for <blue_Arm>)
+          I(N)strument configuration:                                   [NORBI.X]
+          ===========================                                    ^
+            PROGTEMP    obs_mode  resolution  red_Arm.VPH  blue_Arm.VPH
+            1****.*     "MOS"     "low"       "VPH1"       "VPH1"
+            2****.*     "MOS"     "high"      "VPH2"       "VPH2"
+            3****.*     "MOS"     "high"      "VPH2"       "VPH3"
+            4****.*     "LIFU"    "low"       "VPH1"       "VPH1"
+            5****.*     "LIFU"    "high"      "VPH2"       "VPH2"
+            6****.*     "LIFU"    "high"      "VPH2"       "VPH3"
+            7****.*     "mIFU"    "low"       "VPH1"       "VPH1"
+            8****.*     "mIFU"    "high"      "VPH2"       "VPH2"
+            9****.*     "mIFU"    "high"      "VPH2"       "VPH3"
+          B(I)nning in the spectral direction:                          [NORBI.X]
+          ====================================                               ^
+            PROGTEMP    binning_Y
+            ****1.*     1
+            ****2.*     2
+            ****3.*     3
+            ****4.*     4
+            ****9.*     (custom)
+            (All other values forbidden)
+          Some attributes remain unchangable: "readout" is always "slow"
+          Custom (I=9) spectral binning is not available to WEAVE
+          science teams, and for all other cases must be agreed with ING
+          in advance.
+      -->
+    </spectrograph>
+    <exposures>
+      <!--
+          The SWG should provide for a limited number of observing
+          templates ("exposures") here, with a fixed calibration recipe.
+          (O)B length:                                                  [NORBI.X]
+          ============                                                    ^
+          This PROGTEMP component specifies the overall OB length
+          (inclusive of overheads). Whilst we provide the option of
+          setting the following OB lengths, please be aware that not all
+          OB lengths are available (e.g. for WEAVE science teams)
+            PROGTEMP    OB length (min)
+            *0***.*     30
+            *1***.*     60
+            *2***.*     90
+            *3***.*     120
+            *9***.*     (custom)
+          Where O=9, then the RB component of PROGTEMP (below) is
+          ignored, and the user sets exposure times manually. This mode
+          is not available to WEAVE science teams.
+          (R)ed or (B)lue arm exposure code:                            [NORBI.X]
+          ==================================                               ^^
+          It is WEAVE policy to "lock" the arms: i.e. the red and blue
+          arms must be observed with the same exposures within an OB.
+          WEAVE science teams are permitted a limited subset of the
+          below exposure options. PI surveys may use other combinations
+          at their own risk.
+            CODE  exp_time  O=0       O=1        O=2         O=3
+            0      -        1x30min   1x60min    1x90min     1x120min
+            1     60        -         -          -           2x60min
+            2     30        -         2x30min    3x30min     4x30min
+            3     20        -         3x20min    5x18min     6x20min
+            4     15        2x15min   4x15min    6x15min     8x15min
+            5     12        -         5x12min    -           10x12min
+            6     10        3x10min   6x10min    9x10min     12x10min
+            7     8.55      -         7x8.55min  10x8.55min  14x8.55min
+            8     7.5       4x7.5min  8x7.5min   12x7.5min   16x7.5min
+            9     6          5x6min   9x6min     15x6min     20x6min
+          exp_time ~= 60min/code
+          Some examples:
+            PROGTEMP = "11331":
+              MOS, LR, R: 3x20min, B: 3x20min, spectral binning: 1
+            PROGTEMP = "23331":
+              MOS, HR-Blue, R: 6x20min, B: 6x20min, spectral binning: 1
+            PROGTEMP = "32332":
+              MOS, HR-Green, R: 5x18min, B: 5x18min, spectral binning: 2
+          Some RB combinations might be restricted due to excessive
+          readout overheads, e.g.:
+            PROGTEMP = "23601":
+              MOS, HR-Blue, R: 12x10min, B: 1x120min
+          The red arm here would incur a significant overhead readout
+          penalty, and would not be completed at around the same time as
+          the blue arm.
+          NB: The "exp_time" column is for illustrative purposes and
+          includes overheads in the total OB execution time: actual time
+          on-target will be less.
+      -->
+      <exposure arm="red" cal_lamp="QTH" cal_lamp_filter_A="Empty" cal_lamp_filter_B="Empty" exp_time="20" ff_ilu_1="0" ff_ilu_2="0" ff_ilu_3="0" order="1" type="fibre_lampflat"/>
+      <exposure arm="blue" cal_lamp="QTH" cal_lamp_filter_A="Empty" cal_lamp_filter_B="Empty" exp_time="20" ff_ilu_1="0" ff_ilu_2="0" ff_ilu_3="0" order="1" type="fibre_lampflat"/>
+      <exposure arm="red" cal_lamp="ThAr" cal_lamp_filter_A="Empty" cal_lamp_filter_B="Empty" exp_time="25" ff_ilu_1="0" ff_ilu_2="0" ff_ilu_3="0" order="2" type="arc"/>
+      <exposure arm="blue" cal_lamp="ThAr" cal_lamp_filter_A="Empty" cal_lamp_filter_B="Empty" exp_time="25" ff_ilu_1="0" ff_ilu_2="0" ff_ilu_3="0" order="2" type="arc"/>
+      <exposure arm="both" cal_lamp="None" cal_lamp_filter_A="Empty" cal_lamp_filter_B="Empty" exp_time="1020" ff_ilu_1="0" ff_ilu_2="0" ff_ilu_3="0" order="3" type="science"/>
+      <exposure arm="both" cal_lamp="None" cal_lamp_filter_A="Empty" cal_lamp_filter_B="Empty" exp_time="1020" ff_ilu_1="0" ff_ilu_2="0" ff_ilu_3="0" order="4" type="science"/>
+      <exposure arm="both" cal_lamp="None" cal_lamp_filter_A="Empty" cal_lamp_filter_B="Empty" exp_time="1020" ff_ilu_1="0" ff_ilu_2="0" ff_ilu_3="0" order="5" type="science"/>
+      <exposure arm="both" cal_lamp="None" cal_lamp_filter_A="Empty" cal_lamp_filter_B="Empty" exp_time="1020" ff_ilu_1="0" ff_ilu_2="0" ff_ilu_3="0" order="6" type="science"/>
+      <exposure arm="both" cal_lamp="None" cal_lamp_filter_A="Empty" cal_lamp_filter_B="Empty" exp_time="1020" ff_ilu_1="0" ff_ilu_2="0" ff_ilu_3="0" order="7" type="science"/>
+      <exposure arm="both" cal_lamp="None" cal_lamp_filter_A="Empty" cal_lamp_filter_B="Empty" exp_time="1020" ff_ilu_1="0" ff_ilu_2="0" ff_ilu_3="0" order="8" type="science"/>
+      <exposure arm="red" cal_lamp="ThAr" cal_lamp_filter_A="Empty" cal_lamp_filter_B="Empty" exp_time="25" ff_ilu_1="0" ff_ilu_2="0" ff_ilu_3="0" order="9" type="arc"/>
+      <exposure arm="blue" cal_lamp="ThAr" cal_lamp_filter_A="Empty" cal_lamp_filter_B="Empty" exp_time="25" ff_ilu_1="0" ff_ilu_2="0" ff_ilu_3="0" order="9" type="arc"/>
+      <!--
+          What do these values mean?
+          <exposure> defines the sequence of exposures the WEAVE
+          instrument will take within this OB. All attributes are
+          mandatory.
+            - arm:                                                      [fixed in template]
+              Arm to perform the observation with.
+                Possible values: "both", "red", "blue".
+            - cal_lamp:                                                 [fixed in template]
+              Calibration lamp chosen.
+                Possible values are: "None", "Hg", "Ne", "He", "Zn",
+                "Cd", "ThAr", "ThArCr", "QTH", "W"
+            - cal_lamp_filter_A:                                        [fixed in template]
+              Calibration lamp filter used in position A.
+                Possible values: "Empty", "WYC_ND0.5", "WYC_ND2.0",
+                "WYC_ND3.0"
+            - cal_lamp_filter_B:                                        [fixed in template]
+              Calibration lamp filter used in position B.
+                Possible values: "Empty", "WYC_GG395", "WYC_BG38"
+            - exp_time:                                                 [defined by PROGTEMP]
+              Time of exposure (in seconds).
+            - ff_ilu_1:                                                 [fixed in template]
+              Arm flat field illumination LED 1.
+                Possible values: [0-100]
+                (0 corresponds to off and 100 to the max intensity)
+            - ff_ilu_2:                                                 [fixed in template]
+              Arm flat field illumination LED 2.
+                Possible values: [0-100]
+                (0 corresponds to off and 100 to the max intensity)
+            - ff_ilu_3:                                                 [fixed in template]
+              Arm flat field illumination LED 3.
+                Possible values: [0-100]
+                (0 corresponds to off and 100 to the max intensity)
+            - order:                                                    [auto-generated by FITS -> XML code]
+              Order of execution of the exposure with the sequence.
+              For science exposures, links to "order" attribute of
+              <field> element below.
+            - type:                                                     [fixed in template]
+              Exposure type.
+                Possible values: "arc", "bias", "dark", "detector_flat",
+                "fibre_lampflat", "fibre_skyflat", "fibre_twiflat",
+                "salsa_arc", "salsa_lampflat", "salsa_skyflat",
+                "salsa_twiflat", "science", "stdfibre_arc",
+                "stdfibre_lampflat", "stdfibre_skyflat",
+                "stdfibre_twiflat"
+      -->
+    </exposures>
+    <!--
+        Some surveys would like to duplicate observing blocks.
+        X(+) = Clone this XML Observing Block (X) times                 [NORBI.X]
+        ===============================================                        ^
+        This component is entirely optional: XMLChecking will not fail
+        if there is no X value in the PROGTEMP.
+        If a survey wishes to clone this OB, then they can add the .X
+        directive onto the end of the PROGTEMP code.
+        Furthermore, if users want to "chain" these OBs together, such
+        that the observation of one of these clones increases the chance
+        that the remaining OBs in this group are observed, then a "+"
+        can be added to the end of PROGTEMP.
+        The "+" instructs the WEAVE Scheduler to increase the (internal,
+        survey-specific) weight of all OBs in this group. This provides
+        a mechanism to ensure that once a series of observations are
+        started, completion of the chain becomes a progressively higher
+        priority above other OBs from this survey.
+        Some examples:
+          PROGTEMP = "11331.4":
+            Create 4 OBs with the fibre configuraion as defined in this
+            XML file.
+          PROGTEMP = "11331.4+":
+            As above, but probabilistically link them to ensure the
+            chain is completed.
+      -->
+  </programme>
+  <observation casuid="-1" chained="False" coordinate_system="ICRS" linkedgroup="%%%" name="Spam" ob_class="science" ob_priority="1.0" obs_mode="MOS" obsgroup="%%%" obsgroup_validity="%%%" obstemp="DACEB" pa="0.0" progtemp="13331" tac_alloc="%%%" tac_id="%%%" trimester="2020A1">
+    <configure max_calibration="25" max_guide="8" max_sky="100" num_sky_fibres="100" plate="PLATE_B">
+      <conditions epoch="%%%" ha="%%%" pressure="%%%" relative_humidity="%%%" temperature="%%%" tlr="%%%"/>
+    </configure>
+    <!--
+        The <obsconstraints> element must be auto-generated by
+        FITS -> XML code (prior to running configure).
+        Each XML Observing Block has a OBSTEMP value (recorded in
+        <observation>) value, which defines:
+          OBSTEMP = "STAMB"
+            S = (S)eeing
+            T = (T)ransparency
+            A = Elevation (A)ngle [(A)irmass]
+            M = (M)oon distance
+            B = Sky (B)rightness
+        Each OBSTEMP component is divided into grades (A, B, C, D, E...)
+        with "A" being the best. These will need to translate these into
+        their numerical values as defined within the WEAVE data model.
+        For example:
+          OBSTEMP = "AAAAA"
+            S = "A" -> seeing_max="0.7"
+            T = "A" -> transparency_min="0.8"
+            A = "A" -> elevation_min="50.28"
+            M = "A" -> moondist_min="90"
+            B = "A" -> skybright_max="21.7"
+    -->
+    <obsconstraints elevation_min="41.81" moondist_min="0" seeing_max="1.0" skybright_max="21.5" transparency_min="0.8"/>
+    <!--
+        The strategy for dithering within an OB is defined in the
+        "apply_dither" attribute of the <dithering> element.
+        Dithering is only supported for the WEAVE IFU modes.
+        "apply_dither" attribute can take the following values:
+          apply_dither  Meaning
+          -1            Custom dither pattern (LIFU only)
+           0            No dithering (this value is mandatory for MOS)
+           3            Use pre-defined 3-dither pattern
+          -3            Use alternate pre-defined 3-dither pattern
+           4            Use pre-defined 4-dither pattern
+           5            Use pre-defined 5-dither pattern
+           6            Use pre-defined 6-dither pattern
+        The pre-defined dither patterns can be found in the fibre
+        configuration config file within the WEAVE data model.
+        Please be aware that use of these pre-defined patterns may
+        result in holes in the reconstructed cubelets for mIFU data
+        (e.g. the 3-dither pattern). Please consult ICD-030 for more
+        details.
+        The <offsets> element will be populated by configure, using the
+        data entered into the <fields> element.
+    -->
+    <dithering apply_dither="0"/>
+    <surveys>
+      <survey max_fibres="1000" name="GA-LRHIGHLAT" priority="1.0"/>
+      <!--
+          The priority in <survey> elements refers to the inter-survey
+          priority in cases where this field is shared.
+          It has no effect if the OB contains only one survey.
+      -->
+    </surveys>
+    <!--
+        The order attribute within the <field> elements corresponds to
+        the order attributes in the <exposure> elements.
+        For the MOS, they are left empty (as there is no dithering in
+        the MOS). However, for the IFU each dither position must have a
+        <field> entry that in turn points to an <exposure> with a
+        type="science" attribute.
+    -->
+    <fields>
+      <field Dec_d="50.00000" RA_d="100.00000" order="3">
+        <target cname="WVE_06400019+5000453" targcat="WG.fits" targclass="STAR" targdec="50.01258910968164" targepoch="2015.5" targid="WG_1762_1643" targname="" targparal="1.1748152" targpmdec="0.35123417" targpmra="-6.7923236" targprio="10.0" targprog="ANY" targra="100.00079086128768" targsrvy="WG" targuse="G">
+          <photometry emag_bp="0.0033494912" emag_g="" emag_gg="0.0007749489" emag_i="" emag_r="" emag_rp="0.0018042172" mag_bp="16.027142" mag_g="" mag_gg="15.4970455" mag_i="" mag_r="" mag_rp="14.827221"/>
+        </target>
+        <target cname="WVE_06423390+4909077" targcat="WG.fits" targclass="STAR" targdec="49.15213919515269" targepoch="2015.5" targid="WG_1717_507" targname="" targparal="0.58780885" targpmdec="1.3497895" targpmra="3.9330873" targprio="10.0" targprog="ANY" targra="100.64125116514145" targsrvy="WG" targuse="G">
+          <photometry emag_bp="0.004322968" emag_g="" emag_gg="0.00079518976" emag_i="" emag_r="" emag_rp="0.0040693223" mag_bp="15.904716" mag_g="" mag_gg="15.57416" mag_i="" mag_r="" mag_rp="15.06329"/>
+        </target>
+        <target cname="WVE_06342454+4947494" targcat="WG.fits" targclass="STAR" targdec="49.79704621439929" targepoch="2015.5" targid="WG_1719_1113" targname="" targparal="0.9222093" targpmdec="-8.355632" targpmra="2.5207305" targprio="10.0" targprog="ANY" targra="98.60226534518424" targsrvy="WG" targuse="G">
+          <photometry emag_bp="0.012250267" emag_g="" emag_gg="0.00078020757" emag_i="" emag_r="" emag_rp="0.002471432" mag_bp="16.456253" mag_g="" mag_gg="15.9598875" mag_i="" mag_r="" mag_rp="15.311202"/>
+        </target>
+        <target cname="WVE_06373568+4908525" targcat="WG.fits" targclass="STAR" targdec="49.147910841512825" targepoch="2015.5" targid="WG_1719_1653" targname="" targparal="1.1502585" targpmdec="-4.8170857" targpmra="-3.7702327" targprio="10.0" targprog="ANY" targra="99.39865173809673" targsrvy="WG" targuse="G">
+          <photometry emag_bp="0.0021168068" emag_g="" emag_gg="0.0005524943" emag_i="" emag_r="" emag_rp="0.0016885006" mag_bp="15.444399" mag_g="" mag_gg="15.033053" mag_i="" mag_r="" mag_rp="14.458193"/>
+        </target>
+        <target cname="WVE_06452817+4947494" targcat="WG.fits" targclass="STAR" targdec="49.79704630281149" targepoch="2015.5" targid="WG_1760_718" targname="" targparal="0.67281824" targpmdec="-0.20698611" targpmra="0.59307915" targprio="10.0" targprog="ANY" targra="101.3673548382975" targsrvy="WG" targuse="G">
+          <photometry emag_bp="0.006080972" emag_g="" emag_gg="0.00080429285" emag_i="" emag_r="" emag_rp="0.0028668637" mag_bp="16.416002" mag_g="" mag_gg="15.9892235" mag_i="" mag_r="" mag_rp="15.395463"/>
+        </target>
+        <target cname="WVE_06442908+5033106" targcat="WG.fits" targclass="STAR" targdec="50.55295036030575" targepoch="2015.5" targid="WG_1760_577" targname="" targparal="0.7013617" targpmdec="-2.2009118" targpmra="1.7859805" targprio="10.0" targprog="LIFU" targra="101.12118287095949" targsrvy="WG" targuse="G">
+          <photometry emag_bp="0.0048428024" emag_g="" emag_gg="0.00082538754" emag_i="" emag_r="" emag_rp="0.0029382533" mag_bp="16.688261" mag_g="" mag_gg="16.250841" mag_i="" mag_r="" mag_rp="15.654252"/>
+        </target>
+        <target cname="WVE_06400065+5059287" targcat="WG.fits" targclass="STAR" targdec="50.99129599099588" targepoch="2015.5" targid="WG_1762_1646" targname="" targparal="1.1446499" targpmdec="3.813949" targpmra="7.3225913" targprio="10.0" targprog="ANY" targra="100.00271097365035" targsrvy="WG" targuse="G">
+          <photometry emag_bp="0.009150727" emag_g="" emag_gg="0.0021070489" emag_i="" emag_r="" emag_rp="0.007408425" mag_bp="16.054861" mag_g="" mag_gg="15.524115" mag_i="" mag_r="" mag_rp="14.8402"/>
+        </target>
+        <target cname="WVE_06351732+5035242" targcat="WG.fits" targclass="STAR" targdec="50.59005035919173" targepoch="2015.5" targid="WG_1762_988" targname="" targparal="0.956459" targpmdec="-8.90334" targpmra="3.6680646" targprio="10.0" targprog="LIFU" targra="98.82214815572837" targsrvy="WG" targuse="G">
+          <photometry emag_bp="0.004762662" emag_g="" emag_gg="0.00088688923" emag_i="" emag_r="" emag_rp="0.003688542" mag_bp="16.653563" mag_g="" mag_gg="16.113884" mag_i="" mag_r="" mag_rp="15.445115"/>
+        </target>
+        <target cname="WVE_06352704+4921454" targcat="WD.fits" targclass="STAR_WD" targdec="49.36261516916878" targepoch="2015.5" targid="WDJ063527.06+492146.11" targname="WDJ063527.06+492146.11" targparal="4.7388372" targpmdec="-44.99001" targpmra="-8.587773" targprio="5.0" targprog="LR" targra="98.86267428024034" targsrvy="WD" targuse="C">
+          <photometry emag_bp="0.059923343" emag_g="0.0069" emag_gg="0.005402239" emag_i="0.009" emag_r="0.0097" emag_rp="0.06961738" mag_bp="19.636385" mag_g="19.5586" mag_gg="19.598146" mag_i="19.7429" mag_r="19.6559" mag_rp="19.39626"/>
+        </target>
+        <target cname="WVE_06370215+4910431" targcat="WD.fits" targclass="STAR_WD" targdec="49.17864375199299" targepoch="2015.5" targid="WDJ063702.15+491043.01" targname="WDJ063702.15+491043.01" targparal="3.166427" targpmdec="6.915366" targpmra="2.374025" targprio="5.0" targprog="LR" targra="99.2589738147384" targsrvy="WD" targuse="C">
+          <photometry emag_bp="0.03624256" emag_g="0.0102" emag_gg="0.0047627324" emag_i="0.0123" emag_r="0.0118" emag_rp="0.03357981" mag_bp="19.497528" mag_g="19.3826" mag_gg="19.41085" mag_i="19.5807" mag_r="19.4514" mag_rp="19.262503"/>
+        </target>
+        <target cname="WVE_06424867+4958403" targcat="WD.fits" targclass="STAR_WD" targdec="49.977859790053955" targepoch="2015.5" targid="WDJ064248.68+495840.30" targname="WDJ064248.68+495840.30" targparal="3.98841" targpmdec="-0.07640474" targpmra="-5.385824" targprio="5.0" targprog="LR" targra="100.70279617676701" targsrvy="WD" targuse="C">
+          <photometry emag_bp="0.017490616" emag_g="0.0065" emag_gg="0.005709813" emag_i="0.0131" emag_r="0.0079" emag_rp="0.0958444" mag_bp="19.144983" mag_g="19.0493" mag_gg="19.201794" mag_i="19.5628" mag_r="19.3152" mag_rp="19.42953"/>
+        </target>
+        <target cname="WVE_06443777+4943023" targcat="WD.fits" targclass="STAR_WD" targdec="49.71731795770979" targepoch="2015.5" targid="WDJ064437.79+494303.11" targname="WDJ064437.79+494303.11" targparal="3.4275818" targpmdec="-49.67797" targpmra="-9.370426" targprio="5.0" targprog="LR" targra="101.1573857062541" targsrvy="WD" targuse="C">
+          <photometry emag_bp="0.046293024" emag_g="0.0093" emag_gg="0.0060100076" emag_i="0.0056" emag_r="0.0063" emag_rp="0.068223" mag_bp="18.983212" mag_g="19.0831" mag_gg="19.173727" mag_i="19.4495" mag_r="19.2927" mag_rp="19.113987"/>
+        </target>
+        <target cname="WVE_06350281+5030232" targcat="WD.fits" targclass="STAR_WD" targdec="50.5064545925194" targepoch="2015.5" targid="WDJ063502.81+503023.53" targname="WDJ063502.81+503023.53" targparal="2.140469" targpmdec="-18.797964" targpmra="1.0089105" targprio="5.0" targprog="LR" targra="98.76169441953083" targsrvy="WD" targuse="C">
+          <photometry emag_bp="0.078872375" emag_g="0.0103" emag_gg="0.008404278" emag_i="0.0158" emag_r="0.0185" emag_rp="0.08748246" mag_bp="19.887522" mag_g="19.8602" mag_gg="19.903893" mag_i="20.0887" mag_r="19.8965" mag_rp="19.695272"/>
+        </target>
+        <target cname="WVE_06354150+5018508" targcat="WD.fits" targclass="STAR_WD" targdec="50.31410661038581" targepoch="2015.5" targid="WDJ063541.48+501851.66" targname="WDJ063541.48+501851.66" targparal="3.924635" targpmdec="-56.353474" targpmra="7.1484866" targprio="5.0" targprog="LR" targra="98.92290010756604" targsrvy="WD" targuse="C">
+          <photometry emag_bp="0.020236311" emag_g="0.0082" emag_gg="0.00486764" emag_i="0.0046" emag_r="0.0071" emag_rp="0.026866201" mag_bp="18.647297" mag_g="18.6342" mag_gg="18.73378" mag_i="19.0441" mag_r="18.8331" mag_rp="18.69858"/>
+        </target>
+        <target cname="WVE_06363090+5016569" targcat="WD.fits" targclass="STAR_WD" targdec="50.28246885524898" targepoch="2015.5" targid="WDJ063630.90+501657.06" targname="WDJ063630.90+501657.06" targparal="7.3099213" targpmdec="-10.974047" targpmra="-3.8417895" targprio="5.0" targprog="LR" targra="99.12873695819118" targsrvy="WD" targuse="C">
+          <photometry emag_bp="0.02873801" emag_g="0.0081" emag_gg="0.003579944" emag_i="0.0058" emag_r="0.0142" emag_rp="0.026635136" mag_bp="18.667961" mag_g="18.7234" mag_gg="18.642126" mag_i="18.6833" mag_r="18.6432" mag_rp="18.356878"/>
+        </target>
+        <target cname="WVE_06364031+5031065" targcat="WD.fits" targclass="STAR_WD" targdec="50.518462089495685" targepoch="2015.5" targid="WDJ063640.29+503106.65" targname="WDJ063640.29+503106.65" targparal="4.0191164" targpmdec="-11.860448" targpmra="12.684564" targprio="5.0" targprog="LR" targra="99.16797518780345" targsrvy="WD" targuse="C">
+          <photometry emag_bp="0.011237698" emag_g="0.0033" emag_gg="0.0024703674" emag_i="0.0068" emag_r="0.0055" emag_rp="0.012706957" mag_bp="17.467075" mag_g="17.4303" mag_gg="17.600845" mag_i="18.0595" mag_r="17.7521" mag_rp="17.746477"/>
+        </target>
+        <target cname="WVE_06371393+5038173" targcat="WD.fits" targclass="STAR_WD" targdec="50.63814431764718" targepoch="2015.5" targid="WDJ063713.92+503817.49" targname="WDJ063713.92+503817.49" targparal="1.6305264" targpmdec="-11.169754" targpmra="2.6544368" targprio="5.0" targprog="LR" targra="99.30803022431634" targsrvy="WD" targuse="C">
+          <photometry emag_bp="0.08339515" emag_g="0.0094" emag_gg="0.007108299" emag_i="0.0094" emag_r="0.0183" emag_rp="0.06915375" mag_bp="19.744783" mag_g="19.7001" mag_gg="19.724936" mag_i="19.865" mag_r="19.7722" mag_rp="19.54727"/>
+        </target>
+        <target cname="WVE_06371821+5040359" targcat="WD.fits" targclass="STAR_WD" targdec="50.676650142261515" targepoch="2015.5" targid="WDJ063718.29+504036.00" targname="WDJ063718.29+504036.00" targparal="7.150285" targpmdec="-3.8169868" targpmra="-43.57722" targprio="5.0" targprog="LR" targra="99.32589144372761" targsrvy="WD" targuse="C">
+          <photometry emag_bp="0.032426894" emag_g="0.0114" emag_gg="0.005403824" emag_i="0.0088" emag_r="0.007" emag_rp="0.03183053" mag_bp="19.333412" mag_g="19.3699" mag_gg="19.306137" mag_i="19.2759" mag_r="19.295" mag_rp="18.840553"/>
+        </target>
+        <target cname="WVE_06375998+5043568" targcat="WD.fits" targclass="STAR_WD" targdec="50.732441581063846" targepoch="2015.5" targid="WDJ063759.98+504357.07" targname="WDJ063759.98+504357.07" targparal="2.5572875" targpmdec="-17.822" targpmra="-0.6282217" targprio="5.0" targprog="LR" targra="99.49993265500704" targsrvy="WD" targuse="C">
+          <photometry emag_bp="0.033740696" emag_g="0.0073" emag_gg="0.0043011913" emag_i="0.0101" emag_r="0.0197" emag_rp="0.06880299" mag_bp="18.822407" mag_g="18.7682" mag_gg="18.910814" mag_i="19.2906" mag_r="19.0223" mag_rp="18.991364"/>
+        </target>
+        <target cname="WVE_06384045+5009436" targcat="WD.fits" targclass="STAR_WD" targdec="50.162117469293115" targepoch="2015.5" targid="WDJ063840.46+500944.03" targname="WDJ063840.46+500944.03" targparal="4.031465" targpmdec="-26.286272" targpmra="-2.569139" targprio="5.0" targprog="LR" targra="99.66855116187784" targsrvy="WD" targuse="C">
+          <photometry emag_bp="0.056116436" emag_g="0.0127" emag_gg="0.0064603146" emag_i="0.0104" emag_r="0.0093" emag_rp="0.07223445" mag_bp="19.690798" mag_g="19.7574" mag_gg="19.578793" mag_i="19.5047" mag_r="19.5721" mag_rp="19.150658"/>
+        </target>
+        <target cname="WVE_06391160+5041569" targcat="WD.fits" targclass="STAR_WD" targdec="50.699149094375144" targepoch="2015.5" targid="WDJ063911.60+504157.31" targname="WDJ063911.60+504157.31" targparal="2.1588671" targpmdec="-23.982693" targpmra="-0.6721094" targprio="5.0" targprog="LR" targra="99.79831714085856" targsrvy="WD" targuse="C">
+          <photometry emag_bp="0.03593658" emag_g="0.0113" emag_gg="0.0073216753" emag_i="0.0104" emag_r="0.0189" emag_rp="0.05440354" mag_bp="19.789911" mag_g="19.7117" mag_gg="19.775585" mag_i="19.9658" mag_r="19.865" mag_rp="19.552084"/>
+        </target>
+        <target cname="WVE_06395931+5045546" targcat="WD.fits" targclass="STAR_WD" targdec="50.76516122571725" targepoch="2015.5" targid="WDJ063959.32+504554.80" targname="WDJ063959.32+504554.80" targparal="0.6241068" targpmdec="-14.363771" targpmra="-1.6349149" targprio="5.0" targprog="LR" targra="99.9971421910442" targsrvy="WD" targuse="C">
+          <photometry emag_bp="0.03714338" emag_g="0.0064" emag_gg="0.0054073404" emag_i="0.0095" emag_r="0.0177" emag_rp="0.0870626" mag_bp="18.937254" mag_g="18.986" mag_gg="19.205488" mag_i="19.7065" mag_r="19.3895" mag_rp="19.408243"/>
+        </target>
+        <target cname="WVE_06405343+5056259" targcat="WD.fits" targclass="STAR_WD" targdec="50.94052471967692" targepoch="2015.5" targid="WDJ064053.42+505625.75" targname="WDJ064053.42+505625.75" targparal="3.6238306" targpmdec="8.972905" targpmra="5.3880854" targprio="5.0" targprog="LR" targra="100.22260866896788" targsrvy="WD" targuse="C">
+          <photometry emag_bp="0.06515669" emag_g="0.014" emag_gg="0.009211115" emag_i="0.0182" emag_r="0.0092" emag_rp="0.06295959" mag_bp="20.029255" mag_g="19.9133" mag_gg="19.930775" mag_i="20.0282" mag_r="19.9508" mag_rp="19.680862"/>
+        </target>
+        <target cname="WVE_06364031+5031065" targcat="WD.fits" targclass="STAR_WD" targdec="50.518462089495685" targepoch="2015.5" targid="WDJ063640.29+503106.65" targname="WDJ063640.29+503106.65" targparal="4.0191164" targpmdec="-11.860448" targpmra="12.684564" targprio="5.0" targprog="HR" targra="99.16797518780345" targsrvy="WD" targuse="C">
+          <photometry emag_bp="0.011237698" emag_g="0.0033" emag_gg="0.0024703674" emag_i="0.0068" emag_r="0.0055" emag_rp="0.012706957" mag_bp="17.467075" mag_g="17.4303" mag_gg="17.600845" mag_i="18.0595" mag_r="17.7521" mag_rp="17.746477"/>
+        </target>
+        <target cname="" targcat="GA-LRHIGHLAT_2020A1" targclass="STAR" targdec="50.00000" targepoch="2015.5" targid="8" targname="" targparal="0.0" targpmdec="0.0" targpmra="0.0" targprio="1.0" targprog="POI|EMP" targra="100.33888888888889" targsrvy="GA-LRHIGHLAT" targuse="T">
+          <photometry emag_bp="0.0" emag_g="0.1" emag_gg="0.0" emag_i="0.0" emag_r="0.1" emag_rp="0.0" mag_bp="0.0" mag_g="14.0" mag_gg="0.0" mag_i="0.0" mag_r="15.0" mag_rp="0.0"/>
+        </target>
+        <target cname="" targcat="GA-LRHIGHLAT_2020A1" targclass="STAR" targdec="50.00000" targepoch="2015.5" targid="7" targname="" targparal="0.0" targpmdec="0.0" targpmra="0.0" targprio="1.0" targprog="POI|EMP" targra="100.22777777777777" targsrvy="GA-LRHIGHLAT" targuse="T">
+          <photometry emag_bp="0.0" emag_g="0.1" emag_gg="0.0" emag_i="0.0" emag_r="0.1" emag_rp="0.0" mag_bp="0.0" mag_g="13.5" mag_gg="0.0" mag_i="0.0" mag_r="14.5" mag_rp="0.0"/>
+        </target>
+        <target cname="" targcat="GA-LRHIGHLAT_2020A1" targclass="STAR" targdec="50.00000" targepoch="2015.5" targid="6" targname="" targparal="0.0" targpmdec="0.0" targpmra="0.0" targprio="1.0" targprog="POI|EMP" targra="100.11666666666666" targsrvy="GA-LRHIGHLAT" targuse="T">
+          <photometry emag_bp="0.0" emag_g="0.1" emag_gg="0.0" emag_i="0.0" emag_r="0.1" emag_rp="0.0" mag_bp="0.0" mag_g="13.0" mag_gg="0.0" mag_i="0.0" mag_r="14.0" mag_rp="0.0"/>
+        </target>
+        <target cname="" targcat="GA-LRHIGHLAT_2020A1" targclass="STAR" targdec="50.00000" targepoch="2015.5" targid="5" targname="" targparal="0.0" targpmdec="0.0" targpmra="0.0" targprio="1.0" targprog="POI|EMP" targra="100.00555555555556" targsrvy="GA-LRHIGHLAT" targuse="T">
+          <photometry emag_bp="0.0" emag_g="0.1" emag_gg="0.0" emag_i="0.0" emag_r="0.1" emag_rp="0.0" mag_bp="0.0" mag_g="12.5" mag_gg="0.0" mag_i="0.0" mag_r="13.5" mag_rp="0.0"/>
+        </target>
+        <target cname="" targcat="GA-LRHIGHLAT_2020A1" targclass="STAR" targdec="50.00000" targepoch="2015.5" targid="4" targname="" targparal="0.0" targpmdec="0.0" targpmra="0.0" targprio="1.0" targprog="POI|EMP" targra="99.89444444444445" targsrvy="GA-LRHIGHLAT" targuse="T">
+          <photometry emag_bp="0.0" emag_g="0.1" emag_gg="0.0" emag_i="0.0" emag_r="0.1" emag_rp="0.0" mag_bp="0.0" mag_g="12.0" mag_gg="0.0" mag_i="0.0" mag_r="13.0" mag_rp="0.0"/>
+        </target>
+        <target cname="" targcat="GA-LRHIGHLAT_2020A1" targclass="STAR" targdec="50.00000" targepoch="2015.5" targid="3" targname="" targparal="0.0" targpmdec="0.0" targpmra="0.0" targprio="1.0" targprog="POI|EMP" targra="99.78333333333333" targsrvy="GA-LRHIGHLAT" targuse="T">
+          <photometry emag_bp="0.0" emag_g="0.1" emag_gg="0.0" emag_i="0.0" emag_r="0.1" emag_rp="0.0" mag_bp="0.0" mag_g="11.5" mag_gg="0.0" mag_i="0.0" mag_r="12.5" mag_rp="0.0"/>
+        </target>
+        <target cname="" targcat="GA-LRHIGHLAT_2020A1" targclass="STAR" targdec="50.00000" targepoch="2015.5" targid="2" targname="" targparal="0.0" targpmdec="0.0" targpmra="0.0" targprio="1.0" targprog="POI|EMP" targra="99.67222222222222" targsrvy="GA-LRHIGHLAT" targuse="T">
+          <photometry emag_bp="0.0" emag_g="0.1" emag_gg="0.0" emag_i="0.0" emag_r="0.1" emag_rp="0.0" mag_bp="0.0" mag_g="11.0" mag_gg="0.0" mag_i="0.0" mag_r="12.0" mag_rp="0.0"/>
+        </target>
+        <target cname="" targcat="GA-LRHIGHLAT_2020A1" targclass="STAR" targdec="50.00000" targepoch="2015.5" targid="1" targname="" targparal="0.0" targpmdec="0.0" targpmra="0.0" targprio="10.0" targprog="POI|EMP" targra="99.56111111111112" targsrvy="GA-LRHIGHLAT" targuse="T">
+          <photometry emag_bp="0.0" emag_g="0.1" emag_gg="0.0" emag_i="0.0" emag_r="0.1" emag_rp="0.0" mag_bp="0.0" mag_g="10.5" mag_gg="0.0" mag_i="0.0" mag_r="11.5" mag_rp="0.0"/>
+        </target>
+        <target cname="" targcat="GA-LRHIGHLAT_2020A1" targclass="STAR" targdec="50.00000" targepoch="2015.5" targid="0" targname="" targparal="0.0" targpmdec="0.0" targpmra="0.0" targprio="10.0" targprog="POI|EMP" targra="99.45000" targsrvy="GA-LRHIGHLAT" targuse="T">
+          <photometry emag_bp="0.0" emag_g="0.1" emag_gg="0.0" emag_i="0.0" emag_r="0.1" emag_rp="0.0" mag_bp="0.0" mag_g="10.0" mag_gg="0.0" mag_i="0.0" mag_r="11.0" mag_rp="0.0"/>
+        </target>
+        <target cname="" targcat="GA-LRHIGHLAT_2020A1" targclass="STAR" targdec="50.00000" targepoch="2015.5" targid="9" targname="" targparal="0.0" targpmdec="0.0" targpmra="0.0" targprio="1.0" targprog="POI|EMP" targra="100.45000" targsrvy="GA-LRHIGHLAT" targuse="S"/>
+      </field>
+    </fields>
+  </observation>
+</weave>

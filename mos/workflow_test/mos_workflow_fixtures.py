@@ -76,3 +76,18 @@ def pkg_mos_t_xml_files():
 
     return xml_filename_list
 
+@pytest.fixture(scope='session')
+def pkg_mos_tgc_xml_files():
+    xml_files_pattern = str(pathlib.Path(mos.workflow.__path__[0]) /
+                            'mos_stage5' /
+                            'input' / '*-tgc.xml')
+
+    xml_filename_list = glob.glob(xml_files_pattern)
+    xml_filename_list.sort()
+
+    assert len(xml_filename_list) > 0
+
+    for xml_filename in xml_filename_list:
+        assert os.path.exists(xml_filename)
+
+    return xml_filename_list
