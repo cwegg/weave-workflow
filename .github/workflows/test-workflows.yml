@@ -39,4 +39,4 @@ jobs:
         echo "PYTHONPATH=/home/runner/work/weave-workflow/weave-workflow/ifu:/home/runner/work/weave-workflow/weave-workflow" >> $GITHUB_ENV
     - name: Test with pytest
       run: |
-        pytest
+        pytest --durations=10

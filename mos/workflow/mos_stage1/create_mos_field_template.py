@@ -90,7 +90,8 @@ def create_mos_field_template(catalogue_template, output_filename,
 
     # Set the list of columns which will be added to the table
 
-    col_list = ['TARGSRVY', 'PROGTEMP', 'OBSTEMP', 'GAIA_RA', 'GAIA_DEC']
+    col_list = ['TARGSRVY', 'TARGNAME', 'PROGTEMP', 'OBSTEMP',
+                'GAIA_RA', 'GAIA_DEC']
 
     # Set the extension name
 
@@ -111,7 +112,8 @@ def create_mos_field_template(catalogue_template, output_filename,
     # Create a dictionary to renaming the columns - this is ugly,
     # particularly stealing the IFU_DITHER to use as MAX_FIBRES
 
-    rename_col_dict = {'GAIA_RA': 'FIELD_RA',
+    rename_col_dict = {'TARGNAME':'FIELD_NAME',
+                       'GAIA_RA': 'FIELD_RA',
                        'GAIA_DEC': 'FIELD_DEC'}
 
     # Create the sub-template with the above parameters
