@@ -306,7 +306,7 @@
         type="science" attribute.
     -->
     <fields>
-      <field Dec_d="100.00000" RA_d="50.00000" order="3">
+      <field Dec_d="50.00000" RA_d="100.00000" order="3">
 			</field>
     </fields>
   </observation>
