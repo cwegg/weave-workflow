@@ -4,4 +4,5 @@ import pytest
 # pytest requires this to be top-level
 pytest_plugins = [
     "ifu.workflow_test.workflow_fixtures",
+    "mos.workflow_test.mos_workflow_fixtures"
 ]

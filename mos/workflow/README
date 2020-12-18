@@ -11,19 +11,28 @@ specifying where we'd like to construct OBs and with what
 instrument settings/observation conditions.
 
 
-Stage 2: Creation of the XML files with the targets
+Stage 2: Creation of the XML files from the field centers
 ---------------------------------------------------
 
-We then create the XMLs with the targets from the catalogues to these.
+We then create the XMLs from the field center catalogues. These XML don't yet
+contain any targets.
 
-Stage 3: Adding guide and calibration stars to the XML files
+Stage 3: Adding targets to the XML files
+---------------------------------------------------
+
+We then add the targets to the XMLs. These will be mostly science targets but
+there may also be sky targets. The targets from every survey specified
+in stage 1 should be added from their respective catalogues.
+
+
+Stage 4: Adding guide and calibration stars to the XML files
 ------------------------------------------------------------
 
 Each XML file is further developed by injecting the non-science target
 information. This includes addition of the guidestar(s)
 as well as calibration target options.
 
-Stage 4: Configuring the XML files
+Stage 5: Configuring the XML files
 ----------------------------------
 
 **Contributors:** David Terrett

@@ -37,6 +37,8 @@ def get_data_dict():
 
     data_dict['TARGSRVY'] = ['GA-LRHIGHLAT']*2
 
+    data_dict['FIELD_NAME'] = ['Spam','Eggs']
+
     data_dict['PROGTEMP'] = \
         ['13331', '11222.1+']
 

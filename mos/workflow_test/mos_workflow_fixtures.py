@@ -5,8 +5,6 @@ import glob
 
 import mos.workflow
 
-# Then add all fixtures that need changing for MOS
-
 @pytest.fixture(scope='session')
 def pkg_mos_field_template():
     pkg_file_path = str(pathlib.Path(mos.workflow.__path__[0]) / 'mos_stage1' /
@@ -43,3 +41,21 @@ def pkg_mos_t_xml_files():
         assert os.path.exists(xml_filename)
 
     return xml_filename_list
+
+@pytest.fixture(scope='module')
+def mos_target_template(master_cat, tmpdir_factory):
+    file_path = str(pathlib.Path(mos.workflow.__path__[0]) /
+                            'mos_stage3' /
+                            'aux' / 'GA-LRHIGHLAT_CatalogueTemplate.fits')
+
+    return file_path
+
+
+@pytest.fixture(scope='session')
+def pkg_mos_target_cat():
+    pkg_file_path = str(pathlib.Path(mos.workflow.__path__[0]) / 'mos_stage3' /
+                        'input' / 'GA-LRHIGHLAT_2020A1.fits')
+
+    assert os.path.exists(pkg_file_path)
+
+    return pkg_file_path
