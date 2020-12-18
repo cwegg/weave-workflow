@@ -54,7 +54,7 @@ class _MOSFieldCat(_XMLFromFields):
 
     def _generate_mos_xmls(self, mos_entry_list, xml_template, progtemp_dict,
                            obstemp_dict, output_dir='', prefix='',
-                           suffix='-t'):
+                           suffix=''):
 
         output_file_list = []
 
@@ -110,7 +110,7 @@ class _MOSFieldCat(_XMLFromFields):
 
     def generate_xmls(self, xml_template, progtemp_file=None,
                       obstemp_file=None, output_dir='',
-                      prefix='', suffix='-t', pass_datamver=False):
+                      prefix='', suffix='', pass_datamver=False):
 
         # Get the DATAMVER of the XML template
 
@@ -164,7 +164,7 @@ class _MOSFieldCat(_XMLFromFields):
 
 def create_xml_files(mos_field_list, output_dir, xml_template,
                      progtemp_file=None, obstemp_file=None,
-                     prefix=None, suffix='-t',
+                     prefix=None, suffix='',
                      pass_datamver=False, overwrite=False):
     """
     Create XML files with targets from an MOS field list fits file.

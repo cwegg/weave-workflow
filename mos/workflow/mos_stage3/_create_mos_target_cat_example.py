@@ -47,11 +47,10 @@ def get_data_dict(catalogue_template):
                             ['POI|BHB']*targets_per_field
     data_dict['TARGID'] = np.arange(catalogue_length)
     data_dict['TARGNAME'] = ['']*catalogue_length
-    data_dict['TARGUSE'] = ['T']*catalogue_length
+    data_dict['TARGUSE'] = (['T']*9 + ['S'])*2
     data_dict['TARGCLASS'] = ['STAR']*catalogue_length
 
-    data_dict['TARGPRIO'] = [10.0]*2 + [1.0]*(targets_per_field-2) + \
-                            [10.0]*2 + [1.0]*(targets_per_field-2)
+    data_dict['TARGPRIO'] = ([10.0]*2 + [1.0]*(targets_per_field-2))*2
 
     data_dict['PROGTEMP'] = ['13331']*targets_per_field + \
                             ['11222.1+']*targets_per_field

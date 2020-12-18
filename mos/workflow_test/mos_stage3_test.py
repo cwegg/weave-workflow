@@ -37,3 +37,28 @@ def test_fitsdiff_mos_field_cat(mos_target_cat, pkg_mos_target_cat):
          mos_target_cat, pkg_mos_target_cat])
 
     assert returncode == 0
+
+
+@pytest.fixture(scope='module')
+def mos_t_xml_files(pkg_mos_xml_files, mos_target_cat, tmpdir_factory):
+    output_dir = str(tmpdir_factory.mktemp('output'))
+
+    xml_filename_list = mos.workflow.mos_stage3.add_targets(
+        pkg_mos_xml_files, mos_target_cat, output_dir, clean_targets=True)
+
+    return xml_filename_list
+
+
+def test_diff_t_xml_files(mos_t_xml_files, pkg_mos_t_xml_files):
+    assert len(mos_t_xml_files) == len(pkg_mos_t_xml_files)
+
+    mos_t_xml_files.sort(key=os.path.basename)
+    pkg_mos_t_xml_files.sort(key=os.path.basename)
+
+    for ref_file, copy_file in zip(mos_t_xml_files, pkg_mos_t_xml_files):
+        assert os.path.basename(ref_file) == os.path.basename(copy_file)
+
+        returncode = subprocess.call(['diff', '-q', ref_file, copy_file])
+
+        assert returncode == 0
+
