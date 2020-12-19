@@ -269,12 +269,12 @@ if __name__ == '__main__':
 
     if not os.path.exists(args.output_dir):
         logging.info('Creating the output directory')
-        os.mkdir(args.output_dir)
+        os.makedirs(args.output_dir)
 
     xml_template_dir = os.path.dirname(args.xml_template)
     if not os.path.exists(xml_template_dir):
         logging.info('Creating the directory of the blank XML template')
-        os.mkdir(xml_template_dir)
+        os.makedirs(xml_template_dir)
 
     if not os.path.exists(args.xml_template):
         logging.info('Downloading the blank XML template')

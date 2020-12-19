@@ -117,11 +117,11 @@ def add_targets(
         # Let's start creating a mask without any filter
 
         mask = np.zeros(len(catalogue), dtype=bool)
-
         # Add to the mask only those targets whose TARGSRVY is in the surveys
         # element
         for element in ob_xml.surveys.getElementsByTagName('survey'):
             mask += (catalogue['TARGSRVY'] == element.getAttribute('name'))
+
 
         # Filter FITS data comparing the values of the column OBSTEMP with the
         # obstemp attribute of the XML
@@ -133,7 +133,8 @@ def add_targets(
         # progtemp attribute of the XML
 
         progtemp = ob_xml._get_progtemp()
-        mask *= (catalogue['PROGTEMP'] == progtemp)
+        #mask *= (catalogue['PROGTEMP'] == progtemp) TODO weshould filter on
+        # this when Sergey updates progtemp
 
         # Then find targets that are inside the fov
         field = ob_xml.fields.getElementsByTagName('field')[0]
@@ -143,6 +144,8 @@ def add_targets(
 
         offset = field_center_coords.separation(catalogue_coords[mask]).deg
         mask[mask] *= (offset <= max_radius)
+        logging.info(f'Catalogue: {target_cat} Found {mask.sum()} targets for'
+                     f' {xml_file}')
 
         # And finally add them
         ob_xml._add_table_as_targets(catalogue[mask])
