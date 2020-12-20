@@ -133,7 +133,7 @@ def add_targets(
         # progtemp attribute of the XML
 
         progtemp = ob_xml._get_progtemp()
-        #mask *= (catalogue['PROGTEMP'] == progtemp) TODO weshould filter on
+        #mask *= (catalogue['PROGTEMP'] == progtemp) TODO we should filter on
         # this when Sergey updates progtemp
 
         # Then find targets that are inside the fov
@@ -144,8 +144,8 @@ def add_targets(
 
         offset = field_center_coords.separation(catalogue_coords[mask]).deg
         mask[mask] *= (offset <= max_radius)
-        logging.info(f'Catalogue: {target_cat} Found {mask.sum()} targets for'
-                     f' {xml_file}')
+        logging.info('Catalogue: {} Found {} targets for '
+                     '{}'.format(target_cat, mask.sum(), xml_file))
 
         # And finally add them
         ob_xml._add_table_as_targets(catalogue[mask])
