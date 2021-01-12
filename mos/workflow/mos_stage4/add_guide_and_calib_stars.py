@@ -27,6 +27,7 @@ from ifu.workflow.utils.classes import OBXML
 def add_guide_and_calib_stars(xml_file_list,
                               output_dir,
                               num_calib_stars_request=None,
+                              num_guide_stars_request=25,
                               write_useful_tables=False,
                               overwrite=False,
                               max_radius=1.0):
@@ -130,6 +131,7 @@ def add_guide_and_calib_stars(xml_file_list,
             guide_useful_table_filename=guide_useful_table_filename,
             calib_plot_filename=calib_plot_filename,
             calib_useful_table_filename=calib_useful_table_filename,
+            mos_num_guide_stars_stars_request=num_guide_stars_request,
             num_calib_stars_request=num_calib_stars_request,
             min_calib_cut=0,
             max_calib_cut=max_radius)
@@ -160,6 +162,12 @@ if __name__ == '__main__':
                         help="""maximum number of calib stars in the output;
                         -1 means no limit""")
 
+    parser.add_argument('--num_guide_stars_request',
+                        default=-1,
+                        type=int,
+                        help="""maximum number of guide stars in the output;
+                        -1 means no limit""")
+
     parser.add_argument('--write_useful_tables',
                         action='store_true',
                         help="""write tables with the potentially useful stars,
@@ -186,12 +194,18 @@ if __name__ == '__main__':
 
     if args.num_calib_stars_request != -1:
         num_calib_stars_request = args.num_calib_stars_request
-        assert type(num_calib_stars_request) == int
     else:
         num_calib_stars_request = None
+
+    if args.num_guide_stars_request != -1:
+        num_guide_stars_request = args.num_guide_stars_request
+    else:
+        num_guide_stars_request = None
+
 
     add_guide_and_calib_stars(args.xml_file,
                               args.output_dir,
                               num_calib_stars_request=num_calib_stars_request,
+                              num_guide_stars_request=num_guide_stars_request,
                               write_useful_tables=args.write_useful_tables,
                               overwrite=args.overwrite)
