@@ -39,46 +39,45 @@ def get_data_dict(catalogue_template):
 
     fields = 2
     targets_per_field = 10
-    catalogue_length = targets_per_field*fields
+    catalogue_length = targets_per_field * fields
 
-    data_dict['TARGSRVY'] = ['GA-LRHIGHLAT']*catalogue_length
-    data_dict['TARGCAT'] = ['GA-LRHIGHLAT_2020A1']*catalogue_length
+    data_dict['TARGSRVY'] = ['GA-LRHIGHLAT'] * catalogue_length
+    data_dict['TARGCAT'] = ['GA-LRHIGHLAT_2020A1'] * catalogue_length
     data_dict['TARGPROG'] = ['POI|EMP']*targets_per_field + \
                             ['POI|BHB']*targets_per_field
     data_dict['TARGID'] = np.arange(catalogue_length)
-    data_dict['TARGNAME'] = ['']*catalogue_length
-    data_dict['TARGUSE'] = (['T']*9 + ['S'])*2
-    data_dict['TARGCLASS'] = ['STAR']*catalogue_length
+    data_dict['TARGNAME'] = [''] * catalogue_length
+    data_dict['TARGUSE'] = (['T'] * 9 + ['S']) * 2
+    data_dict['TARGCLASS'] = ['STAR'] * catalogue_length
 
-    data_dict['TARGPRIO'] = ([10.0]*2 + [1.0]*(targets_per_field-2))*2
+    data_dict['TARGPRIO'] = ([10.0] * 2 + [1.0] * (targets_per_field - 2)) * 2
 
     data_dict['PROGTEMP'] = ['13331']*targets_per_field + \
                             ['11222.1+']*targets_per_field
 
-    data_dict['OBSTEMP'] = ['DACEB']*catalogue_length
-
+    data_dict['OBSTEMP'] = ['DACEB'] * catalogue_length
 
     # For testing place 10 targets in a line at constant dec
-    data_dict['GAIA_RA'] = np.append(np.linspace(-0.55,0.45,targets_per_field)+100,
-                                     np.linspace(-0.55,0.45,targets_per_field)+200)
+    data_dict['GAIA_RA'] = np.append(
+        np.linspace(-0.55, 0.45, targets_per_field) + 100,
+        np.linspace(-0.55, 0.45, targets_per_field) + 200)
 
-    data_dict['GAIA_DEC'] = [50.0]*catalogue_length
-    data_dict['GAIA_ID'] = ['']*catalogue_length
-    data_dict['GAIA_DR'] = ['']*catalogue_length
-    data_dict['GAIA_EPOCH'] = [2015.5]*catalogue_length
-    data_dict['GAIA_PMRA'] = [0.0]*catalogue_length
-    data_dict['GAIA_PMRA_ERR'] = [0.0]*catalogue_length
-    data_dict['GAIA_PMDEC'] = [0.0]*catalogue_length
-    data_dict['GAIA_PMDEC_ERR'] = [0.0]*catalogue_length
-    data_dict['GAIA_PARAL'] = [0.0]*catalogue_length
-    data_dict['GAIA_PARAL_ERR'] = [0.0]*catalogue_length
-
+    data_dict['GAIA_DEC'] = [50.0] * catalogue_length
+    data_dict['GAIA_ID'] = [''] * catalogue_length
+    data_dict['GAIA_DR'] = [''] * catalogue_length
+    data_dict['GAIA_EPOCH'] = [2015.5] * catalogue_length
+    data_dict['GAIA_PMRA'] = [0.0] * catalogue_length
+    data_dict['GAIA_PMRA_ERR'] = [0.0] * catalogue_length
+    data_dict['GAIA_PMDEC'] = [0.0] * catalogue_length
+    data_dict['GAIA_PMDEC_ERR'] = [0.0] * catalogue_length
+    data_dict['GAIA_PARAL'] = [0.0] * catalogue_length
+    data_dict['GAIA_PARAL_ERR'] = [0.0] * catalogue_length
 
     # Add photometry elements
-    data_dict['MAG_G'] = np.arange(catalogue_length)*0.5 + 10
-    data_dict['MAG_G_ERR'] = [0.1]*catalogue_length
-    data_dict['MAG_R'] = np.arange(catalogue_length)*0.5 + 11
-    data_dict['MAG_R_ERR'] = [0.1]*catalogue_length
+    data_dict['MAG_G'] = np.arange(catalogue_length) * 0.5 + 10
+    data_dict['MAG_G_ERR'] = [0.1] * catalogue_length
+    data_dict['MAG_R'] = np.arange(catalogue_length) * 0.5 + 11
+    data_dict['MAG_R_ERR'] = [0.1] * catalogue_length
 
     # Fill up other columns with their null or meaningless values
     with fits.open(catalogue_template) as hdul:
@@ -97,8 +96,13 @@ def get_data_dict(catalogue_template):
     return data_dict
 
 
-def create_mos_target_cat(catalogue_template, data_dict, output_filename,
-                          trimester, author, report_verbosity=1, cc_report='',
+def create_mos_target_cat(catalogue_template,
+                          data_dict,
+                          output_filename,
+                          trimester,
+                          author,
+                          report_verbosity=1,
+                          cc_report='',
                           overwrite=False):
     """
     Create a IFU driver catalogue using a template and the needed information.
@@ -135,12 +139,19 @@ def create_mos_target_cat(catalogue_template, data_dict, output_filename,
 
     assert report_verbosity in [0, 1]
 
-    primary_kwds = {'TRIMESTE': trimester, 'VERBOSE': report_verbosity,
-                    'AUTHOR': author, 'CCREPORT': cc_report}
+    primary_kwds = {
+        'TRIMESTE': trimester,
+        'VERBOSE': report_verbosity,
+        'AUTHOR': author,
+        'CCREPORT': cc_report
+    }
 
-    populate_fits_table_template(catalogue_template, data_dict,
-                                 output_filename, primary_kwds=primary_kwds,
-                                 update_datetime=True, overwrite=overwrite)
+    populate_fits_table_template(catalogue_template,
+                                 data_dict,
+                                 output_filename,
+                                 primary_kwds=primary_kwds,
+                                 update_datetime=True,
+                                 overwrite=overwrite)
 
     return output_filename
 
@@ -154,8 +165,7 @@ if __name__ == '__main__':
                                       'GA-LRHIGHLAT_CatalogueTemplate.fits')
 
     output_dir = 'input'
-    output_filename = os.path.join(output_dir,
-                                   'GA-LRHIGHLAT_2020A1.fits')
+    output_filename = os.path.join(output_dir, 'GA-LRHIGHLAT_2020A1.fits')
 
     ############################################################################
     # Create the output directory if it does not exist
@@ -179,6 +189,10 @@ if __name__ == '__main__':
     ############################################################################
     # Create the IFU driver catalogue
 
-    create_mos_target_cat(catalogue_template, data_dict, output_filename,
-                         trimester, author, report_verbosity=report_verbosity,
-                         cc_report=cc_report)
+    create_mos_target_cat(catalogue_template,
+                          data_dict,
+                          output_filename,
+                          trimester,
+                          author,
+                          report_verbosity=report_verbosity,
+                          cc_report=cc_report)

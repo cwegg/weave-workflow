@@ -3,6 +3,7 @@ import subprocess
 import os.path
 import mos.workflow.mos_stage4
 
+
 @pytest.fixture(scope='module')
 def mos_tgc_xml_files(pkg_mos_t_xml_files, tmpdir_factory):
     output_dir = str(tmpdir_factory.mktemp('output'))

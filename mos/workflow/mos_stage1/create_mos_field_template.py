@@ -36,7 +36,9 @@ from ifu.workflow.utils import create_sub_template
 from ifu.workflow.utils.get_resources import get_master_cat
 
 
-def _add_column_to_fits_template(template, column, update_datetime=False,
+def _add_column_to_fits_template(template,
+                                 column,
+                                 update_datetime=False,
                                  checksum=True):
     """
     Add a column in-place to a fits file.
@@ -71,8 +73,10 @@ def _add_column_to_fits_template(template, column, update_datetime=False,
     hdulist.writeto(template, checksum=checksum, overwrite=True)
 
 
-def create_mos_field_template(catalogue_template, output_filename,
-                              update_datetime=False, overwrite=False):
+def create_mos_field_template(catalogue_template,
+                              output_filename,
+                              update_datetime=False,
+                              overwrite=False):
     """
     Create a template for the IFU driver catalogues.
 
@@ -90,8 +94,9 @@ def create_mos_field_template(catalogue_template, output_filename,
 
     # Set the list of columns which will be added to the table
 
-    col_list = ['TARGSRVY', 'TARGNAME', 'PROGTEMP', 'OBSTEMP',
-                'GAIA_RA', 'GAIA_DEC']
+    col_list = [
+        'TARGSRVY', 'TARGNAME', 'PROGTEMP', 'OBSTEMP', 'GAIA_RA', 'GAIA_DEC'
+    ]
 
     # Set the extension name
 
@@ -112,25 +117,32 @@ def create_mos_field_template(catalogue_template, output_filename,
     # Create a dictionary to renaming the columns - this is ugly,
     # particularly stealing the IFU_DITHER to use as MAX_FIBRES
 
-    rename_col_dict = {'TARGNAME':'FIELD_NAME',
-                       'GAIA_RA': 'FIELD_RA',
-                       'GAIA_DEC': 'FIELD_DEC'}
+    rename_col_dict = {
+        'TARGNAME': 'FIELD_NAME',
+        'GAIA_RA': 'FIELD_RA',
+        'GAIA_DEC': 'FIELD_DEC'
+    }
 
     # Create the sub-template with the above parameters
 
-    create_sub_template(catalogue_template, output_filename, col_list,
-                        extname=extname, inherit_primary_kwds=False,
+    create_sub_template(catalogue_template,
+                        output_filename,
+                        col_list,
+                        extname=extname,
+                        inherit_primary_kwds=False,
                         inherited_kwds=inherited_kwds,
                         new_primary_kwds=new_primary_kwds,
                         rename_col_dict=rename_col_dict,
-                        update_datetime=update_datetime, overwrite=overwrite)
+                        update_datetime=update_datetime,
+                        overwrite=overwrite)
 
     # Add the MAX_FIBRES column - This won't look like a SPA column,
     # but  since there is no UCD etc. then this is anyway inevitable
-    column = _fits.Column(name='MAX_FIBRES', format='I', null=0,
-                          disp='I3')
-    _add_column_to_fits_template(output_filename, column,
-                                 update_datetime=update_datetime, checksum=True)
+    column = _fits.Column(name='MAX_FIBRES', format='I', null=0, disp='I3')
+    _add_column_to_fits_template(output_filename,
+                                 column,
+                                 update_datetime=update_datetime,
+                                 checksum=True)
 
 
 if __name__ == '__main__':
@@ -138,25 +150,30 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Create a template for the MOS driver catalogues')
 
-    parser.add_argument('--in', dest='catalogue_template',
+    parser.add_argument('--in',
+                        dest='catalogue_template',
                         default=os.path.join('aux',
                                              'Master_CatalogueTemplate.fits'),
                         help="""name of catalogue template containing the SPA
                         columns""")
 
-    parser.add_argument('--out', dest='mos_field_template',
+    parser.add_argument('--out',
+                        dest='mos_field_template',
                         default=os.path.join('aux', 'mos_field_template.fits'),
                         help="""name for the output file which will contain the
                         new template for the MOS field center catalogues""")
 
-    parser.add_argument('--update_datetime', action='store_true',
+    parser.add_argument('--update_datetime',
+                        action='store_true',
                         help="""update DATETIME keyword from the catalogue
                         template""")
 
-    parser.add_argument('--overwrite', action='store_true',
+    parser.add_argument('--overwrite',
+                        action='store_true',
                         help='overwrite the output file')
 
-    parser.add_argument('--log_level', default='info',
+    parser.add_argument('--log_level',
+                        default='info',
                         choices=['debug', 'info', 'warning', 'error'],
                         help='the level for the logging messages')
 

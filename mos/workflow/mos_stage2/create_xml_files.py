@@ -17,7 +17,6 @@
 # this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-
 import argparse
 import glob
 import logging
@@ -30,8 +29,7 @@ import numpy as np
 from astropy.io import fits
 
 from workflow.utils.get_resources import (get_blank_xml_template,
-                                          get_progtemp_file,
-                                          get_obstemp_file)
+                                          get_progtemp_file, get_obstemp_file)
 
 from ifu.workflow.stage2.create_xml_files import _XMLFromFields
 from ifu.workflow.utils.get_progtemp_info import get_obsmode_from_progtemp
@@ -52,15 +50,20 @@ class _MOSFieldCat(_XMLFromFields):
     def __init__(self, filename):
         super().__init__(filename, mode='mos')
 
-    def _generate_mos_xmls(self, mos_entry_list, xml_template, progtemp_dict,
-                           obstemp_dict, output_dir='', prefix='',
+    def _generate_mos_xmls(self,
+                           mos_entry_list,
+                           xml_template,
+                           progtemp_dict,
+                           obstemp_dict,
+                           output_dir='',
+                           prefix='',
                            suffix=''):
 
         output_file_list = []
 
         # How do you group bundles belonging to the same field?
-        group_id = (
-        'FIELD_NAME', 'PROGTEMP', 'OBSTEMP', 'FIELD_RA', 'FIELD_DEC')
+        group_id = ('FIELD_NAME', 'PROGTEMP', 'OBSTEMP', 'FIELD_RA',
+                    'FIELD_DEC')
 
         # Group the MOS entries per field
 
@@ -86,17 +89,18 @@ class _MOSFieldCat(_XMLFromFields):
 
             ob_nested_list.append(field_entry_list)
 
-
         # Proccess OB grouping
         logging.info('Processing {} MOS fields'.format(len(fields_dict)))
 
         for entry_group in ob_nested_list:
             # Make the OB name be part of the xml name
-            thisprefix = entry_group[0]['FIELD_NAME']+'_'
+            thisprefix = entry_group[0]['FIELD_NAME'] + '_'
             if prefix is not None:
-                thisprefix = prefix+'_'+thisprefix
-            output_file = self._process_ob(entry_group, xml_template,
-                                           progtemp_dict, obstemp_dict,
+                thisprefix = prefix + '_' + thisprefix
+            output_file = self._process_ob(entry_group,
+                                           xml_template,
+                                           progtemp_dict,
+                                           obstemp_dict,
                                            spatial_binning=1,
                                            output_dir=output_dir,
                                            prefix=thisprefix,
@@ -106,11 +110,14 @@ class _MOSFieldCat(_XMLFromFields):
 
         return output_file_list
 
-
-
-    def generate_xmls(self, xml_template, progtemp_file=None,
-                      obstemp_file=None, output_dir='',
-                      prefix='', suffix='', pass_datamver=False):
+    def generate_xmls(self,
+                      xml_template,
+                      progtemp_file=None,
+                      obstemp_file=None,
+                      output_dir='',
+                      prefix='',
+                      suffix='',
+                      pass_datamver=False):
 
         # Get the DATAMVER of the XML template
 
@@ -125,10 +132,9 @@ class _MOSFieldCat(_XMLFromFields):
         # and OBSTEMP file are consistent
 
         if self.datamver != xml_datamver:
-            logging.critical(
-                'DATAMVER mismatch ({} != {}) for XML template: '.format(
-                    self.datamver, xml_datamver) +
-                'Stop unless you are sure!')
+            logging.critical('DATAMVER mismatch ({} != {}) for XML template: '.
+                             format(self.datamver, xml_datamver) +
+                             'Stop unless you are sure!')
 
             if pass_datamver == False:
                 raise SystemExit(2)
@@ -143,8 +149,8 @@ class _MOSFieldCat(_XMLFromFields):
             progtemp = entry['PROGTEMP']
 
             try:
-                obsmode = get_obsmode_from_progtemp(progtemp,
-                                                    progtemp_dict=progtemp_dict)
+                obsmode = get_obsmode_from_progtemp(
+                    progtemp, progtemp_dict=progtemp_dict)
             except:
                 obsmode = None
 
@@ -155,17 +161,26 @@ class _MOSFieldCat(_XMLFromFields):
                     i + 1, progtemp))
 
         # Generate the  XMLs
-        output_file_list = self._generate_mos_xmls(
-            mos_entry_list, xml_template, progtemp_dict, obstemp_dict,
-            output_dir=output_dir, prefix=prefix, suffix=suffix)
+        output_file_list = self._generate_mos_xmls(mos_entry_list,
+                                                   xml_template,
+                                                   progtemp_dict,
+                                                   obstemp_dict,
+                                                   output_dir=output_dir,
+                                                   prefix=prefix,
+                                                   suffix=suffix)
 
         return output_file_list
 
 
-def create_xml_files(mos_field_list, output_dir, xml_template,
-                     progtemp_file=None, obstemp_file=None,
-                     prefix=None, suffix='',
-                     pass_datamver=False, overwrite=False):
+def create_xml_files(mos_field_list,
+                     output_dir,
+                     xml_template,
+                     progtemp_file=None,
+                     obstemp_file=None,
+                     prefix=None,
+                     suffix='',
+                     pass_datamver=False,
+                     overwrite=False):
     """
     Create XML files with targets from an MOS field list fits file.
 
@@ -208,15 +223,19 @@ def create_xml_files(mos_field_list, output_dir, xml_template,
     # Remove the previous files if overwriting has been requested
 
     if overwrite == True:
-        mos_field_cat.remove_xmls(output_dir=output_dir, prefix=prefix,
-                                   suffix=suffix)
+        mos_field_cat.remove_xmls(output_dir=output_dir,
+                                  prefix=prefix,
+                                  suffix=suffix)
 
     # Create the XML files
 
-    output_file_list = mos_field_cat.generate_xmls(
-        xml_template, progtemp_file=progtemp_file, obstemp_file=obstemp_file,
-        output_dir=output_dir, prefix=prefix, suffix=suffix,
-        pass_datamver=pass_datamver)
+    output_file_list = mos_field_cat.generate_xmls(xml_template,
+                                                   progtemp_file=progtemp_file,
+                                                   obstemp_file=obstemp_file,
+                                                   output_dir=output_dir,
+                                                   prefix=prefix,
+                                                   suffix=suffix,
+                                                   pass_datamver=pass_datamver)
 
     return output_file_list
 
@@ -244,22 +263,30 @@ if __name__ == '__main__':
                         help="""a obstemp.dat file with the definition of
                         OBSTEMP""")
 
-    parser.add_argument('--outdir', dest='output_dir', default='output',
+    parser.add_argument('--outdir',
+                        dest='output_dir',
+                        default='output',
                         help="""name of the directory which will containe the
                         output XML files""")
 
-    parser.add_argument('--prefix', dest='prefix', default=None,
+    parser.add_argument('--prefix',
+                        dest='prefix',
+                        default=None,
                         help="""prefix to be used in the output files (it will
                         be derived from ifu_driver_cat if non provided)""")
 
-    parser.add_argument('--pass_datamver', dest='pass_datamver',
+    parser.add_argument('--pass_datamver',
+                        dest='pass_datamver',
                         action='store_true',
                         help='continue even if DATAMVER mismatch is detected')
 
-    parser.add_argument('--overwrite', dest='overwrite', action='store_true',
+    parser.add_argument('--overwrite',
+                        dest='overwrite',
+                        action='store_true',
                         help='overwrite the output files')
 
-    parser.add_argument('--log_level', default='info',
+    parser.add_argument('--log_level',
+                        default='info',
                         choices=['debug', 'info', 'warning', 'error'],
                         help='the level for the logging messages')
 
@@ -288,9 +315,11 @@ if __name__ == '__main__':
         logging.info('Downloading the obstemp file')
         get_obstemp_file(file_path=args.obstemp_file)
 
-    create_xml_files(args.mos_field_list, args.output_dir, args.xml_template,
+    create_xml_files(args.mos_field_list,
+                     args.output_dir,
+                     args.xml_template,
                      progtemp_file=args.progtemp_file,
                      obstemp_file=args.obstemp_file,
-                     prefix=args.prefix, pass_datamver=args.pass_datamver,
+                     prefix=args.prefix,
+                     pass_datamver=args.pass_datamver,
                      overwrite=args.overwrite)
-

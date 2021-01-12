@@ -17,7 +17,6 @@
 # this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-
 import argparse
 import logging
 import os
@@ -35,9 +34,13 @@ def clean_xml_targets(ob_xml):
             if target.getAttribute('targsrvy') == '%%%':
                 field.removeChild(target)
 
-def add_targets(
-        xml_file_list, target_cat, output_dir, max_radius=1.0,
-        clean_targets=True, overwrite=False):
+
+def add_targets(xml_file_list,
+                target_cat,
+                output_dir,
+                max_radius=1.0,
+                clean_targets=True,
+                overwrite=False):
     """
     Add guide and calib stars to XML files.
 
@@ -69,8 +72,9 @@ def add_targets(
     # Load our catalogue and compute coordinates since this is common to all
     # fields
     catalogue = Table.read(target_cat)
-    catalogue_coords = SkyCoord(ra=catalogue['GAIA_RA'],dec=catalogue[
-        'GAIA_DEC'], unit='deg')
+    catalogue_coords = SkyCoord(ra=catalogue['GAIA_RA'],
+                                dec=catalogue['GAIA_DEC'],
+                                unit='deg')
 
     for xml_file in xml_file_list:
 
@@ -82,8 +86,8 @@ def add_targets(
 
         input_basename_wo_ext = os.path.splitext(os.path.basename(xml_file))[0]
 
-        if (input_basename_wo_ext.endswith('-t') or
-                input_basename_wo_ext.endswith('-')):
+        if (input_basename_wo_ext.endswith('-t')
+                or input_basename_wo_ext.endswith('-')):
             output_basename_wo_ext = input_basename_wo_ext + 't'
         else:
             output_basename_wo_ext = input_basename_wo_ext + '-t'
@@ -122,7 +126,6 @@ def add_targets(
         for element in ob_xml.surveys.getElementsByTagName('survey'):
             mask += (catalogue['TARGSRVY'] == element.getAttribute('name'))
 
-
         # Filter FITS data comparing the values of the column OBSTEMP with the
         # obstemp attribute of the XML
 
@@ -140,7 +143,7 @@ def add_targets(
         field = ob_xml.fields.getElementsByTagName('field')[0]
         field_ra = field.getAttribute('RA_d')
         field_dec = field.getAttribute('Dec_d')
-        field_center_coords = SkyCoord(ra=field_ra, dec=field_dec,unit='deg')
+        field_center_coords = SkyCoord(ra=field_ra, dec=field_dec, unit='deg')
 
         offset = field_center_coords.separation(catalogue_coords[mask]).deg
         mask[mask] *= (offset <= max_radius)
@@ -163,28 +166,36 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Add guide and calib stars to XML files')
 
-    parser.add_argument('target_cat',
-                        help="""A catalogue containing targets""")
+    parser.add_argument('xml_file',
+                        nargs='+',
+                        help="""One or more input OB XML files""")
 
-    parser.add_argument('xml_file', nargs='+',
-                        help="""one or more input OB XML files""")
+    parser.add_argument('--catalogues',
+                        nargs='+',
+                        help="""Catalogues containing targets""")
 
-    parser.add_argument('--outdir', dest='output_dir', default='output',
+    parser.add_argument('--outdir',
+                        dest='output_dir',
+                        default='output',
                         help="""name of the directory which will contain the
                         output XML files""")
 
-    parser.add_argument('--max_radius', default=1.0, type=float,
+    parser.add_argument('--max_radius',
+                        default=1.0,
+                        type=float,
                         help="""Add targets within these degrees of the 
                         field center""")
 
-    parser.add_argument('--overwrite', action='store_true',
+    parser.add_argument('--overwrite',
+                        action='store_true',
                         help='overwrite the output files')
 
-    parser.add_argument('--clean', action='store_true',
-                        help="""remove any template targets (should be 
-                        called when adding the last catalogue)""")
+    parser.add_argument('--clean',
+                        action='store_true',
+                        help="""Remove any template targets""")
 
-    parser.add_argument('--log_level', default='info',
+    parser.add_argument('--log_level',
+                        default='info',
                         choices=['debug', 'info', 'warning', 'error'],
                         help='the level for the logging messages')
 
@@ -196,9 +207,16 @@ if __name__ == '__main__':
         logging.info('Creating the output directory')
         os.mkdir(args.output_dir)
 
-    add_targets(xml_file_list=args.xml_file, target_cat=args.target_cat,
-                output_dir=args.output_dir, max_radius=args.max_radius,
-                clean_targets=args.clean,
-                overwrite=args.overwrite)
+    for i, target_cat in enumerate(args.catalogues):
+        # Clean after adding the last catalogue if we were asked to
+        if (i == len(args.catalogues) - 1) and args.clean:
+            clean = True
+        else:
+            clean = False
 
-
+        add_targets(xml_file_list=args.xml_file,
+                    target_cat=target_cat,
+                    output_dir=args.output_dir,
+                    max_radius=args.max_radius,
+                    clean_targets=clean,
+                    overwrite=args.overwrite)

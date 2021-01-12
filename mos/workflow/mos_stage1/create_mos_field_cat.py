@@ -17,12 +17,17 @@
 # this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-
 from ifu.workflow.utils import populate_fits_table_template
 
-def create_mos_field_cat(mos_field_template, data_dict, output_filename,
-                          trimester, author, report_verbosity=1, cc_report='',
-                          overwrite=False):
+
+def create_mos_field_cat(mos_field_template,
+                         data_dict,
+                         output_filename,
+                         trimester,
+                         author,
+                         report_verbosity=1,
+                         cc_report='',
+                         overwrite=False):
     """
     Create a IFU driver catalogue using a template and the needed information.
 
@@ -58,12 +63,18 @@ def create_mos_field_cat(mos_field_template, data_dict, output_filename,
 
     assert report_verbosity in [0, 1]
 
-    primary_kwds = {'TRIMESTE': trimester, 'VERBOSE': report_verbosity,
-                    'AUTHOR': author, 'CCREPORT': cc_report}
+    primary_kwds = {
+        'TRIMESTE': trimester,
+        'VERBOSE': report_verbosity,
+        'AUTHOR': author,
+        'CCREPORT': cc_report
+    }
 
-    populate_fits_table_template(mos_field_template, data_dict,
-                                 output_filename, primary_kwds=primary_kwds,
-                                 update_datetime=True, overwrite=overwrite)
+    populate_fits_table_template(mos_field_template,
+                                 data_dict,
+                                 output_filename,
+                                 primary_kwds=primary_kwds,
+                                 update_datetime=True,
+                                 overwrite=overwrite)
 
     return output_filename
-

@@ -17,7 +17,6 @@
 # this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-
 import argparse
 import logging
 import os
@@ -25,10 +24,12 @@ import os
 from ifu.workflow.utils.classes import OBXML
 
 
-def add_guide_and_calib_stars(
-        xml_file_list, output_dir,
-        num_calib_stars_request=None, write_useful_tables=False,
-        overwrite=False, max_radius=1.0):
+def add_guide_and_calib_stars(xml_file_list,
+                              output_dir,
+                              num_calib_stars_request=None,
+                              write_useful_tables=False,
+                              overwrite=False,
+                              max_radius=1.0):
     """
     Add guide and calib stars to XML files.
     
@@ -68,8 +69,8 @@ def add_guide_and_calib_stars(
 
         input_basename_wo_ext = os.path.splitext(os.path.basename(xml_file))[0]
 
-        if (input_basename_wo_ext.endswith('-t') or
-            input_basename_wo_ext.endswith('-')):
+        if (input_basename_wo_ext.endswith('-t')
+                or input_basename_wo_ext.endswith('-')):
             output_basename_wo_ext = input_basename_wo_ext + 'gc'
         else:
             output_basename_wo_ext = input_basename_wo_ext + '-gc'
@@ -79,12 +80,14 @@ def add_guide_and_calib_stars(
             output_dir, output_basename_wo_ext + '-guide_stars.png')
         calib_plot_filename = os.path.join(
             output_dir, output_basename_wo_ext + '-calib_stars.png')
-        
+
         if write_useful_tables is True:
             guide_useful_table_filename = os.path.join(
-                output_dir, output_basename_wo_ext + '-useful_guide_stars.fits')
+                output_dir,
+                output_basename_wo_ext + '-useful_guide_stars.fits')
             calib_useful_table_filename = os.path.join(
-                output_dir, output_basename_wo_ext + '-useful_calib_stars.fits')
+                output_dir,
+                output_basename_wo_ext + '-useful_calib_stars.fits')
         else:
             guide_useful_table_filename = None
             calib_useful_table_filename = None
@@ -100,15 +103,17 @@ def add_guide_and_calib_stars(
             if overwrite == True:
                 logging.info('Removing previous file: {}'.format(output_file))
                 os.remove(output_file)
-                
-                for filename in [guide_plot_filename, calib_plot_filename,
-                                 guide_useful_table_filename,
-                                 calib_useful_table_filename]:
+
+                for filename in [
+                        guide_plot_filename, calib_plot_filename,
+                        guide_useful_table_filename,
+                        calib_useful_table_filename
+                ]:
                     if (filename is not None) and os.path.exists(filename):
                         logging.info(
                             'Removing previous file: {}'.format(filename))
                         os.remove(filename)
-                        
+
             else:
                 logging.info(
                     'Skipping file {} as its output already exists: {}'.format(
@@ -117,7 +122,7 @@ def add_guide_and_calib_stars(
 
         # Read the input file, add the guide and calib stars and write it to the
         # output file
-        
+
         ob_xml = OBXML(xml_file)
 
         ob_xml.add_guide_and_calib_stars(
@@ -137,29 +142,37 @@ def add_guide_and_calib_stars(
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(
-             description='Add guide and calib stars to MOS XML files')
+        description='Add guide and calib stars to MOS XML files')
 
-    parser.add_argument('xml_file', nargs='+',
+    parser.add_argument('xml_file',
+                        nargs='+',
                         help="""an input OB XML file in MOS mode""")
 
-    parser.add_argument('--outdir', dest='output_dir', default='output',
+    parser.add_argument('--outdir',
+                        dest='output_dir',
+                        default='output',
                         help="""name of the directory which will contain the
                         output XML files""")
 
-    parser.add_argument('--num_calib_stars_request', default=-1, type=int,
+    parser.add_argument('--num_calib_stars_request',
+                        default=-1,
+                        type=int,
                         help="""maximum number of calib stars in the output;
                         -1 means no limit""")
 
-    parser.add_argument('--write_useful_tables', action='store_true',
+    parser.add_argument('--write_useful_tables',
+                        action='store_true',
                         help="""write tables with the potentially useful stars,
                         i.e. those guide or calib stars available for the
                         position of the location in the sky of each OB XML
                         file""")
 
-    parser.add_argument('--overwrite', action='store_true',
+    parser.add_argument('--overwrite',
+                        action='store_true',
                         help='overwrite the output files')
 
-    parser.add_argument('--log_level', default='info',
+    parser.add_argument('--log_level',
+                        default='info',
                         choices=['debug', 'info', 'warning', 'error'],
                         help='the level for the logging messages')
 
@@ -177,8 +190,8 @@ if __name__ == '__main__':
     else:
         num_calib_stars_request = None
 
-    add_guide_and_calib_stars(
-        args.xml_file, args.output_dir,
-        num_calib_stars_request=num_calib_stars_request,
-        write_useful_tables=args.write_useful_tables, overwrite=args.overwrite)
-
+    add_guide_and_calib_stars(args.xml_file,
+                              args.output_dir,
+                              num_calib_stars_request=num_calib_stars_request,
+                              write_useful_tables=args.write_useful_tables,
+                              overwrite=args.overwrite)

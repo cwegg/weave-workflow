@@ -17,7 +17,6 @@
 # this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-
 import os
 
 from mos.workflow.mos_stage1 import create_mos_field_cat
@@ -35,14 +34,14 @@ def set_keywords_info():
 def get_data_dict():
     data_dict = {}
 
-    data_dict['TARGSRVY'] = ['GA-LRHIGHLAT']*2
+    data_dict['TARGSRVY'] = ['GA-LRHIGHLAT'] * 2
 
-    data_dict['FIELD_NAME'] = ['Spam','Eggs']
+    data_dict['FIELD_NAME'] = ['Spam', 'Eggs']
 
     data_dict['PROGTEMP'] = \
         ['13331', '11222.1+']
 
-    data_dict['OBSTEMP'] = ['DACEB']*2
+    data_dict['OBSTEMP'] = ['DACEB'] * 2
 
     data_dict['FIELD_RA'] = \
         [100.,200.]
@@ -89,7 +88,10 @@ if __name__ == '__main__':
     ############################################################################
     # Create the IFU driver catalogue
 
-    create_mos_field_cat(mos_field_template, data_dict, output_filename,
-                          trimester, author, report_verbosity=report_verbosity,
-                          cc_report=cc_report)
-
+    create_mos_field_cat(mos_field_template,
+                         data_dict,
+                         output_filename,
+                         trimester,
+                         author,
+                         report_verbosity=report_verbosity,
+                         cc_report=cc_report)
